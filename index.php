@@ -5,15 +5,12 @@ $username = "root";
 $password = "";
 $dbname = "heroes_db";
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// create
 function createHero($name, $about_me, $biography, $conn)
 {
     $sql = "INSERT INTO heroes (name, about_me, biography) VALUES ('$name', '$about_me', '$biography')";
@@ -25,8 +22,6 @@ function createHero($name, $about_me, $biography, $conn)
     }
 }
 
-
-// read
 function readAllHeroes($conn)
 {
     $sql = "SELECT * FROM heroes";
@@ -39,10 +34,8 @@ function readAllHeroes($conn)
     } else {
         echo "0 results";
     }
-    // }
 }
 
-//update
 function updateHero($id, $name, $about_me, $biography, $conn)
 {
     $sql = "UPDATE heroes SET name='$name', about_me='$about_me', biography='$biography' WHERE id='$id'";
@@ -54,10 +47,8 @@ function updateHero($id, $name, $about_me, $biography, $conn)
     }
 }
 
-//delete
 function deleteHero($id, $conn)
 {
-    // sql to delete a record
     $sql = "DELETE FROM heroes WHERE id='$id'";
 
     if ($conn->query($sql) === TRUE) {
@@ -81,7 +72,6 @@ function getAll()
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        // output data of each row
         while ($row = $result->fetch_assoc()) {
             print_r($row);
         }
