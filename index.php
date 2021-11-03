@@ -13,7 +13,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-
 // create
 function createHero($name, $about_me, $biography, $conn)
 {
@@ -33,17 +32,20 @@ function readAllHeroes($conn)
     $sql = "SELECT * FROM heroes";
     $result = $conn->query($sql);
 
-    if ($conn->query($sql) === TRUE) {
-        echo "Record updated successfully";
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo "<br> id: " . $row["id"] . " - Hero: " . $row["name"] . " - About Me: " . $row["about_me"] . " - Biography: " . $row["biography"] . "<br>";
+        }
     } else {
-        echo "Error updating record: " . $conn->error;
+        echo "0 results";
     }
+    // }
 }
 
 //update
 function updateHero($id, $name, $about_me, $biography, $conn)
 {
-    $sql = "UPDATE heroes SET name='$name', about_me='$about_me', biography='$biography' WHERE id=$id";
+    $sql = "UPDATE heroes SET name='$name', about_me='$about_me', biography='$biography' WHERE id='$id'";
 
     if ($conn->query($sql) === TRUE) {
         echo "Record updated successfully";
@@ -65,15 +67,26 @@ function deleteHero($id, $conn)
     }
 }
 
-function getAll($conn)
+function getAll()
 {
+    $sql = "SELECT 
+    heroes.name, 
+    heroes.about_me, 
+    GROUP_CONCAT(ability_type.ability separator ', ') ability_type
+    FROM ((heroes
+    INNER JOIN abilities on heroes.id = abilities.hero_id)
+    INNER JOIN ability_type ON abilities.ability_id = ability_type.id)
+    GROUP BY heroes.name, heroes.about_me";
+    global $conn;
+    $result = $conn->query($sql);
 
-    $sql = "SELECT * FROM heroes"; //inner join
-
-    if ($conn->query($sql) === TRUE) {
-        echo "Record deleted successfully";
+    if ($result->num_rows > 0) {
+        // output data of each row
+        while ($row = $result->fetch_assoc()) {
+            print_r($row);
+        }
     } else {
-        echo "Error deleting record: " . $conn->error;
+        echo $conn->errors;
     }
 }
 
@@ -88,10 +101,10 @@ if ($route != "") {
             getAll($_GET["id"], $conn);
             break;
         case "read":
-            // readAllHeroes($_GET["id"], $conn);
+            readAllHeroes($conn);
             break;
         case "update":
-            updateHero($_GET["id"], $_GET["name"], $_GET["about_me"], $_GET["biography"], $conn);
+            updateHero($_POST["id"], $_POST["name"], $_POST["about_me"], $_POST["biography"], $conn);
             break;
         case "delete":
             deleteHero($_GET["id"], $conn);
@@ -99,7 +112,6 @@ if ($route != "") {
         default:
             echo 'Error 404';
     }
-    // readAllHeroes($conn);
 }
 
 $conn->close();
