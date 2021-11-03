@@ -20,11 +20,14 @@ if ($route != "") {
         case "create":
             createHero($_GET["name"], $_GET["about_me"], $_GET["biography"], $conn);
             break;
+            case "all":
+            getAll($_GET["id"], $conn);
+            break;
         case "read":
             // readAllHeroes($_GET["id"], $conn);
             break;
         case "update":
-            updateHero($_GET["id"], $_GET["name"], $_GET["tagline"], $conn);
+            updateHero($_GET["id"], $_GET["name"], $_GET["about_me"], $_GET["biography"], $conn);
             break;
         case "delete":
             deleteHero($_GET["id"], $conn);
@@ -49,30 +52,18 @@ function createHero($name, $about_me, $biography, $conn)
 }
 
 // read
-function readAllHeroes()
+function readAllHeroes($conn)
 {
-    // output heroes from the array
+    $sql = "SELECT * FROM heroes";
+    $result = $conn->query($sql);
 
 
 }
 
-function updateHero($id, $name, $tagline)
+//update
+function updateHero($id, $name, $about_me, $biography, $conn)
 {
-    //
-    //array_splice($_SESSION["heroes"],$index,1,[[$name, $tagline]]);
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "heroes_db";
-
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    $sql = "UPDATE heroes SET tagline='$tagline', nickname='$name' WHERE id=$id";
+    $sql = "UPDATE heroes SET name='$name', about_me='$about_me', biography='$biography' WHERE id=$id";
 
     if ($conn->query($sql) === TRUE) {
         echo "Record updated successfully";
@@ -82,20 +73,8 @@ function updateHero($id, $name, $tagline)
     $conn->close();
 }
 
-function deleteHero($id)
+function deleteHero($id, $conn)
 {
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "heroes_db";
-
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
     // sql to delete a record
     $sql = "DELETE FROM heroes WHERE id=$id";
 
@@ -105,6 +84,16 @@ function deleteHero($id)
         echo "Error deleting record: " . $conn->error;
     }
 }
-function getAllHeroes()
-{
+
+function getAll ($conn){
+
+    $sql = "SELECT * FROM heroes";
+
+ if ($conn->query($sql) === TRUE) {
+        echo "Record deleted successfully";
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
 }
+
+?>
