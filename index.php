@@ -1,31 +1,4 @@
 <?php
-session_start();
-
-$route = $_GET["route"];
-
-if($route != ""){
-    switch ($route) {
-        case "create":
-            createHero($_GET["name"], $_GET["tagline"]);
-            break;
-        case "read":
-            readAllHeroes($_GET["id"]);
-            break;
-        case "update":
-            updateHero($_GET["id"], $_GET["name"], $_GET["tagline"]);
-            break;
-        case "delete":
-            deleteHero($_GET["id"]);
-            break;
-        default:
-            
-        }
-    
-}
-// readAllHeroes();
-
-// create
-function createHero ($name, $tagline){
 
     $servername = "localhost";
     $username = "root";
@@ -40,8 +13,33 @@ function createHero ($name, $tagline){
         die("Connection failed: " . $conn->connect_error);
     }
 
-    $sql = "INSERT INTO heroes (nickname, tagline)
-    VALUES ('$name', '$tagline')";
+$route = $_GET["route"];
+
+if($route != ""){
+    switch ($route) {
+        case "create":
+            createHero($_GET["name"], $_GET["about_me"], $_GET["biography"], $conn);
+            break;
+        case "read":
+            // readAllHeroes($_GET["id"], $conn);
+            break;
+        case "update":
+            updateHero($_GET["id"], $_GET["name"], $_GET["tagline"], $conn);
+            break;
+        case "delete":
+            deleteHero($_GET["id"], $conn);
+            break;
+        default:
+            
+        }
+    
+        readAllHeroes($conn);
+}
+
+// create
+function createHero ($name, $about_me, $biography, $conn) {
+
+    $sql = "INSERT INTO heroes (name, about_me, biography) VALUES ($name, $about_me, $biography)";
 
     if ($conn->query($sql) === TRUE) {
     echo "New record created successfully";
