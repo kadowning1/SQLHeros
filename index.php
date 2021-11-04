@@ -11,8 +11,28 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-function createHero($name, $about_me, $biography)
+function createHero()
 {
+    $wrong_values = '';
+    if (!isset($_POST["name"])) {
+        $wrong_values .= 'name';
+    }
+
+    if (!isset($_POST["about_me"])) {
+        $wrong_values .= 'about_me';
+    }
+
+    if (!isset($_POST["biography"])) {
+        $wrong_values .= 'biography';
+    }
+    if (strlen($wrong_values) > 0) {
+        echo "422 error, $wrong_values is not set";
+        return;
+    }
+    $name = $_POST["name"];
+    $about_me = $_POST["about_me"];
+    $biography = $_POST["biography"];
+
     $sql = "INSERT INTO heroes (name, about_me, biography) VALUES ('$name', '$about_me', '$biography')";
     global $conn;
     if ($conn->query($sql) === TRUE) {
@@ -22,8 +42,20 @@ function createHero($name, $about_me, $biography)
     }
 }
 
-function addAbility($ability)
+function addAbility()
 {
+    $wrong_values = '';
+    if (!isset($_POST["ability"])) {
+        $wrong_values .= 'ability';
+    }
+
+    if (strlen($wrong_values) > 0) {
+        echo "422 error, $wrong_values is not set";
+        return;
+    }
+
+    $ability = $_POST["ability"];
+
     $sql = "INSERT INTO ability_type (ability) VALUES ('$ability')";
     global $conn;
     if ($conn->query($sql) === TRUE) {
@@ -38,7 +70,7 @@ function readAllHeroes()
     $sql = "SELECT * FROM heroes";
     global $conn;
     $result = $conn->query($sql);
-    global $conn;
+
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             echo "<br> id: " . $row["id"] . " - Hero: " . $row["name"] . " - About Me: " . $row["about_me"] . " - Biography: " . $row["biography"] . "<br>";
@@ -63,8 +95,35 @@ function getAbility()
     }
 }
 
-function updateHero($id, $name, $about_me, $biography)
+function updateHero()
 {
+    $wrong_values = '';
+
+    if (!isset($_POST["id"])) {
+        $wrong_values .= 'id';
+    }
+
+    if (!isset($_POST["name"])) {
+        $wrong_values .= 'name';
+    }
+
+    if (!isset($_POST["about_me"])) {
+        $wrong_values .= 'about_me';
+    }
+
+    if (!isset($_POST["biography"])) {
+        $wrong_values .= 'biography';
+    }
+    if (strlen($wrong_values) > 0) {
+        echo "422 error, $wrong_values  is not set";
+        return;
+    }
+
+    $id = $_POST["id"];
+    $name = $_POST["name"];
+    $about_me = $_POST["about_me"];
+    $biography = $_POST["biography"];
+
     $sql = "UPDATE heroes SET name='$name', about_me='$about_me', biography='$biography' WHERE id='$id'";
     global $conn;
     if ($conn->query($sql) === TRUE) {
@@ -74,8 +133,26 @@ function updateHero($id, $name, $about_me, $biography)
     }
 }
 
-function updateAbility($ability, $id)
+function updateAbility()
 {
+    $wrong_values = '';
+
+    if (!isset($_POST["id"])) {
+        $wrong_values .= 'id';
+    }
+
+    if (!isset($_POST["ability"])) {
+        $wrong_values .= 'ability';
+    }
+
+    if (strlen($wrong_values) > 0) {
+        echo "422 error, $wrong_values is not set";
+        return;
+    }
+
+    $id = $_POST["id"];
+    $ability = $_POST["ability"];
+
     $sql = "UPDATE ability_type SET ability='$ability' WHERE id='$id'";
     global $conn;
     if ($conn->query($sql) === TRUE) {
@@ -85,8 +162,9 @@ function updateAbility($ability, $id)
     }
 }
 
-function deleteHero($id)
+function deleteHero()
 {
+    $id = $_POST["id"];
     $sql = "DELETE FROM heroes WHERE id='$id'";
     global $conn;
     if ($conn->query($sql) === TRUE) {
@@ -96,8 +174,9 @@ function deleteHero($id)
     }
 }
 
-function deleteAbility($id)
+function deleteAbility()
 {
+    $id = $_GET["id"];
     $sql = "DELETE FROM ability_type WHERE id='$id'";
     global $conn;
     if ($conn->query($sql) === TRUE) {
@@ -107,8 +186,9 @@ function deleteAbility($id)
     }
 }
 
-function getAll()
+function getAllAbilities()
 {
+    $id = $_GET["id"];
     $sql = "SELECT 
     heroes.name, 
     heroes.about_me, 
@@ -135,35 +215,36 @@ $route = $_GET["route"];
 if ($route != "") {
     switch ($route) {
         case "create":
-            createHero($_POST["name"], $_POST["about_me"], $_POST["biography"], $conn);
+            createHero();
             break;
         case "getability":
-            getAbility($conn);
+            getAbility();
             break;
         case "addability":
-            addAbility($_POST["ability"], $conn);
+            addAbility();
             break;
         case "updateAbility":
-            updateAbility($_POST["ability"], $_POST['id'], $conn);
+            updateAbility();
             break;
         case "deleteAbility":
-            deleteAbility($_GET['id'], $conn);
+            deleteAbility();
             break;
-        case "all":
-            getAll($_GET["id"], $conn);
+        case "allAbility":
+            getAllAbilities();
             break;
         case "read":
-            readAllHeroes($conn);
+            readAllHeroes();
             break;
         case "update":
-            updateHero($_POST["id"], $_POST["name"], $_POST["about_me"], $_POST["biography"], $conn);
+            updateHero();
             break;
         case "delete":
-            deleteHero($_GET["id"], $conn);
+            deleteHero();
             break;
         default:
             echo 'Error 404';
     }
 }
+
 
 $conn->close();
