@@ -73,7 +73,7 @@ function readAllHeroes()
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            echo "<br> id: " . $row["id"] . " - Hero: " . $row["name"] . " - About Me: " . $row["about_me"] . " - Biography: " . $row["biography"] . "<br>";
+            echo "id: " . $row["id"] . " - Hero: " . $row["name"] . " - About Me: " . $row["about_me"] . " - Biography: " . $row["biography"] . '<br>';
         }
     } else {
         echo "0 results";
@@ -164,7 +164,7 @@ function updateAbility()
 
 function deleteHero()
 {
-    $id = $_POST["id"];
+    $id = $_GET["id"];
     $sql = "DELETE FROM heroes WHERE id='$id'";
     global $conn;
     if ($conn->query($sql) === TRUE) {
